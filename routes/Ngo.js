@@ -1,17 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { Ngo } = require('../models/NGO');
-const {User} = require('../models/User') 
-
-
-router.get('/ngo', async (req, res) => {
-    try {
-        const data = await Ngo.find({});
-        res.status(200).send(data); // Corrected
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Error"); // Adjust status code and message as needed
-    }
+const { Ngo } = require("../models/NGO");
+const { User } = require("../models/User");
+router.get("/ngo", async (req, res) => {
+  try {
+    const data = await Ngo.find({});
+    res.status(200).json({ data }); // Corrected
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error"); // Adjust status code and message as needed
+  }
 });
 
 router.get('/ngo/:category', async (req, res) => {
@@ -36,6 +34,11 @@ router.post('/ngo/donate/:id/', async (req, res) => {
         if (!user) {
             return res.status(404).send("User not found");
         }
+    // Find the user by their ID
+    const user = await User.findOne({ id: "2" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
         // Retrieve the Fitcoins of the user
         const fitcoins = user.coins;
@@ -43,11 +46,11 @@ router.post('/ngo/donate/:id/', async (req, res) => {
             return res.status(400).send("Insufficient Fitcoins");
         }
 
-        // Find the NGO by its ID
-        const ngo = await Ngo.findOne({ publicKey: id });
-        if (!ngo) {
-            return res.status(404).send("NGO not found");
-        }
+    // Find the NGO by its ID
+    const ngo = await Ngo.findOne({ publicKey: id });
+    if (!ngo) {
+      return res.status(404).json({ error: "NGO not found" });
+    }
 
         // Check if the user has previously donated to the NGO
         const previousDonation = ngo.raisedAmount.find(donation => donation.id === user.id);
@@ -68,13 +71,11 @@ router.post('/ngo/donate/:id/', async (req, res) => {
         // Save the updated NGO and user
         await ngo.save();
 
-        res.status(200).send("Donation successful");
-    } catch (e) {
-        console.log(e);
-        res.status(500).send("Error");
-    }
+    res.status(200).json({ message: "Donation successful" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: e });
+  }
 });
-
-
 
 module.exports = router;
