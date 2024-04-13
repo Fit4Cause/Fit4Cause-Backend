@@ -33,8 +33,7 @@ const connectMongoose = async () => {
     const url = 'mongodb+srv://ppt123:catdog69@cluster-fit.gx437k6.mongodb.net/fit4Cause';
     await mongoose.connect(url);
     console.log('Connected to MongoDB');
-    // const foodData= await fetchData();
-    // return foodData;
+    
   
   } catch (err) {
     console.log('Error connecting to MongoDB:', err);

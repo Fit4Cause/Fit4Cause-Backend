@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Ngo } = require('../models/NGO');
 const {User} = require('../models/User') 
+
+
 router.get('/ngo', async (req, res) => {
     try {
         const data = await Ngo.find({});
@@ -12,12 +14,25 @@ router.get('/ngo', async (req, res) => {
     }
 });
 
+router.get('/ngo/:category', async (req, res) => {
+    try {
+        const category = req.params.category.toLowerCase(); // Ensure category is lowercase
+
+        // Find NGOs based on the provided category
+        const ngos = await Ngo.find({ category: category });
+        res.status(200).json(ngos);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error fetching NGOs by category");
+    }
+});
+
 router.post('/ngo/donate/:id/', async (req, res) => {
     try {
         const id = req.params.id;
 
         // Find the user by their ID
-        const user = await User.findOne({ id: '2' });
+        const user = await User.findOne({ id: "2" });
         if (!user) {
             return res.status(404).send("User not found");
         }
@@ -28,20 +43,29 @@ router.post('/ngo/donate/:id/', async (req, res) => {
             return res.status(400).send("Insufficient Fitcoins");
         }
 
-        // Deduct the same amount from the user's Fitcoins
-        const donatedAmount = fitcoins;
-        user.coins = 0;
-        await user.save();
-
         // Find the NGO by its ID
         const ngo = await Ngo.findOne({ publicKey: id });
         if (!ngo) {
             return res.status(404).send("NGO not found");
         }
 
-        // Add the donated amount to the NGO's raisedAmount and collection
-        ngo.raisedAmount.push({ id: user.id, amount: donatedAmount, type: 'user' });
-        ngo.collection += donatedAmount;
+        // Check if the user has previously donated to the NGO
+        const previousDonation = ngo.raisedAmount.find(donation => donation.id === user.id);
+        if (previousDonation) {
+            // If the user has previously donated, update the donation amount
+            previousDonation.amount += fitcoins;
+            ngo.collection += fitcoins;
+        } else {
+            // If the user has not previously donated, add a new entry
+            ngo.raisedAmount.push({ id: user.id, amount: fitcoins, type: 'user' });
+            ngo.collection += fitcoins;
+        }
+
+        // Deduct the same amount from the user's Fitcoins
+        user.coins = 0;
+        await user.save();
+        
+        // Save the updated NGO and user
         await ngo.save();
 
         res.status(200).send("Donation successful");
