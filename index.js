@@ -26,9 +26,6 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  console.log("homepage");
-});
 app.listen(3000, () => {
   console.log("server is runnning at port 3000");
 });
