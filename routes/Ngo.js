@@ -40,9 +40,10 @@ router.get('/ngo/:category', async (req, res) => {
 router.post('/ngo/donate/:id/', async (req, res) => {
     try {
         const id = req.params.id;
+        const userId= req.body.id;
 
         // Find the user by their ID
-        const user = await User.findOne({ id: id });
+        const user = await User.findOne({ id: "3" }); //id:userId
         if (!user) {
             return res.status(404).send("User not found");
         }
