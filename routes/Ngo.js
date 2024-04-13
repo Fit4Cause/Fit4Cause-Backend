@@ -11,6 +11,18 @@ router.get("/ngo", async (req, res) => {
     res.status(500).send("Error"); // Adjust status code and message as needed
   }
 });
+router.get("/ngo/:category", async (req, res) => {
+  try {
+    const category = req.params.category.toLowerCase(); // Ensure category is lowercase
+    // Find NGOs based on the provided category
+    console.log(category);
+    const ngos = await Ngo.find({ category });
+    res.status(200).json({ ngos });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error });
+  }
+});
 
 router.get('/ngo/:category', async (req, res) => {
     try {
