@@ -1,20 +1,16 @@
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
+const { User } = require('./User'); // Assuming userSchema is exported from User.js
 
 // Define a sub-schema for donatedTo
-const DonationSchema = new Schema({
-    NGO: {
-        type: String,
-        required: true
-    },
-    amount: {
-        type: Number,
-        required: true
-    }
-});
 
-const OrganizationSchema = new Schema({
+const amount={
+    id:"number",
+    amount:"number",
+    type:['user', 'Organization']
+}
+const NgoSchema = new Schema({
     Name: {
         type: String,
         required: true,
@@ -27,10 +23,22 @@ const OrganizationSchema = new Schema({
         type: String,
         required: true
     },
-    donationAmount: {
-        type: Number
+    image: {
+        type: String
     },
-    donatedTo: [NGO] // Nesting DonationSchema inside donatedTo array
+    category: {
+        type: String,
+        required: true // Corrected from semicolon to comma
+    },
+    raisedAmount: {
+        type:[amount]
+    },
+    collection:{
+        type:Number
+    }
+   
 });
 
-module.exports = mongoose.model('Organization', OrganizationSchema);
+const Ngo =  mongoose.model('Ngo', NgoSchema);
+
+module.exports = {Ngo};

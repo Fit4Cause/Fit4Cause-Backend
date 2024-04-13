@@ -8,7 +8,6 @@ const secretKey = "phenom@srv";
 
 
 
-//validation in user
 
 
 
@@ -72,14 +71,8 @@ const secretKey = "phenom@srv";
 
 // })
 
-router.get('/createuser', (req, res) => {
-   res.json("get running");
-})
 
 
-router.get('/createuser', () => {
-   res.send('hit');
-})
 
 
 module.exports = router;
