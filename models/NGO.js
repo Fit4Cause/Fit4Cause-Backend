@@ -5,11 +5,15 @@ const { User } = require('./User'); // Assuming userSchema is exported from User
 
 // Define a sub-schema for donatedTo
 
-const amount={
-    id:"number",
-    amount:"number",
-    type:['user', 'Organization']
-}
+const amountSchema = new Schema({
+    id: String,
+    amount: Number,
+    type: {
+        type: String,
+        enum: ['user', 'Organization']
+    }
+});
+
 const NgoSchema = new Schema({
     Name: {
         type: String,
@@ -28,16 +32,16 @@ const NgoSchema = new Schema({
     },
     category: {
         type: String,
-        required: true // Corrected from semicolon to comma
+        required: true
     },
     raisedAmount: {
-        type:[amount]
+        type: [amountSchema]
     },
-    collection:{
-        type:Number
+    collection: {
+        type: Number
     }
-   
 });
+
 
 const Ngo =  mongoose.model('Ngo', NgoSchema);
 
