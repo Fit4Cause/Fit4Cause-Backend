@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express();
+const {User}=require('././models/User.js')
 const cors= require('cors');
 const connectMongoose= require('./db.js')
 const bodyParser = require('body-parser');
@@ -14,12 +15,28 @@ const router=express.Router();
 
 
 
-//stores foodData here
+
 connectMongoose();
 
-// app.use('/api/', require('./routes/createUser.js'));
-// app.use('/api/', require('./routes/foodData.js'));
-// app.use('/api', require('./routes/OrderDetails.js'))
+app.use('/api/', require('./routes/Ngo.js'));
+
+
+
+app.get('/users', async(req,res)=>{
+    try{
+        const user= await User.find({id:"2"});
+        console.log(user);
+        res.send(user)
+
+    }
+    catch(e){
+        console.log("error fetching users details", e)
+    }
+})
+
+app.get('/', (req,res)=>{
+    console.log("homepage");
+})
 app.listen(3000,()=>{
     console.log("server is runnning at port 3000");
 

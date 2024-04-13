@@ -30,10 +30,10 @@ const fetchData = async () => {
   
 const connectMongoose = async () => {
   try {
-    const url = 'mongodb+srv://itssauravgpt123:iUBX1wQTaWVzr2xw@cluster-fit.gx437k6.mongodb.net/';
+    const url = 'mongodb+srv://ppt123:catdog69@cluster-fit.gx437k6.mongodb.net/fit4Cause';
     await mongoose.connect(url);
     console.log('Connected to MongoDB');
-    const foodData= await fetchData();
+    // const foodData= await fetchData();
     // return foodData;
   
   } catch (err) {
