@@ -30,15 +30,10 @@ router.post('/ngo/donate/:id/', async (req, res) => {
         const id = req.params.id;
 
         // Find the user by their ID
-        const user = await User.findOne({ id: "2" });
+        const user = await User.findOne({ id: id });
         if (!user) {
             return res.status(404).send("User not found");
         }
-    // Find the user by their ID
-    const user = await User.findOne({ id: "2" });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
 
         // Retrieve the Fitcoins of the user
         const fitcoins = user.coins;
@@ -46,17 +41,17 @@ router.post('/ngo/donate/:id/', async (req, res) => {
             return res.status(400).send("Insufficient Fitcoins");
         }
 
-    // Find the NGO by its ID
-    const ngo = await Ngo.findOne({ publicKey: id });
-    if (!ngo) {
-      return res.status(404).json({ error: "NGO not found" });
-    }
+        // Find the NGO by its ID
+        const ngo = await Ngo.findOne({ publicKey: id });
+        if (!ngo) {
+            return res.status(404).send("NGO not found");
+        }
 
         // Check if the user has previously donated to the NGO
-        const previousDonation = ngo.raisedAmount.find(donation => donation.id === user.id);
-        if (previousDonation) {
+        const previousDonationIndex = ngo.raisedAmount.findIndex(donation => donation.id === user.id);
+        if (previousDonationIndex !== -1) {
             // If the user has previously donated, update the donation amount
-            previousDonation.amount += fitcoins;
+            ngo.raisedAmount[previousDonationIndex].amount += fitcoins;
             ngo.collection += fitcoins;
         } else {
             // If the user has not previously donated, add a new entry
@@ -71,11 +66,12 @@ router.post('/ngo/donate/:id/', async (req, res) => {
         // Save the updated NGO and user
         await ngo.save();
 
-    res.status(200).json({ message: "Donation successful" });
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ error: e });
-  }
+        res.status(200).send("Donation successful");
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Error");
+    }
 });
+
 
 module.exports = router;
